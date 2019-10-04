@@ -1,1 +1,6 @@
-<p>saper-game works!</p>
+<div class="board size-{{boardWidth}}-{{boardHeight}}">
+	<div *ngFor="let field of this.board" class="field pos-{{field.x}}-{{field.y}} {{field.state}}" (click)="onFieldClick(field)">
+		<span *ngIf="field.isMine" class="value mine"></span>
+		<span *ngIf="this.field.isMine == false" class="value">{{field.value > 0 ? field.value : ''}}</span>
+	</div>
+</div>
