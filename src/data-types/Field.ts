@@ -13,6 +13,18 @@ export class Field
 		for ( let key in config )
 			this[key] = config[key];
 	}
+
+
+	public isEmpty()
+	{
+		return this.value == 0;
+	}
+
+
+	public isDisplayed()
+	{
+		return this.state === FieldState.DISPLAYED;
+	}
 }
 
 

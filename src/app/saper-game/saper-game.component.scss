@@ -28,7 +28,7 @@ $max-grid-height: 10;
 	width: 500px;
 	height: 500px;
 
-	display: inline-grid;
+	display: grid;
 
 	border: 2px solid red;
 
@@ -42,27 +42,22 @@ $max-grid-height: 10;
 
 	.field
 	{
-		width: 100%;
-		height:100%;
-
-		font-size: 2em;
-
 		display:flex;
 		justify-content:center;
 		align-items:center;
 
+		font-size: 2em;
+		border: 1px solid black;
+
+		cursor: pointer;
+
 		& > .value { position: absolute; }
+		&:not(.displayed) > .value { display: none; }
+		& > .value.mine { padding:20px; background:red;}
 
-		&.default
-		{
-			border: 1px solid black;
-
-			cursor: pointer;
-
-			& > .value { display: none; }
-		}
-
-		.mine { padding:20px; background:blue;}
+		&.default { background: gray; }
+		&.marked { background: green; }
+		&.unknown { background: blue; }
 
 		@for $x from 0 through $max-grid-width
 		{

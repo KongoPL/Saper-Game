@@ -24,6 +24,8 @@ export class SaperGameComponent implements OnInit
 
 	private generateBoard()
 	{
+		this.board = [];
+
 		// Generate mines:
 		for ( let i = 0; i < this.minesCount; i++ )
 		{
@@ -97,8 +99,98 @@ export class SaperGameComponent implements OnInit
 	}
 
 
-	public onFieldClick( field: Field )
+	public displayField( field: Field )
 	{
+		if ( field.isDisplayed() )
+			return;
+
 		field.state = FieldState.DISPLAYED;
+
+		this.tryToEndGame();
+
+		if ( !field.isEmpty() )
+			return;
+
+		const fields = [
+			this.getFieldAt( field.x - 1, field.y - 1 ),
+			this.getFieldAt( field.x, field.y - 1 ),
+			this.getFieldAt( field.x + 1, field.y - 1 ),
+
+			this.getFieldAt( field.x - 1, field.y ),
+			this.getFieldAt( field.x + 1, field.y ),
+
+			this.getFieldAt( field.x - 1, field.y + 1 ),
+			this.getFieldAt( field.x, field.y + 1 ),
+			this.getFieldAt( field.x + 1, field.y + 1 )
+		];
+
+		for ( field of fields )
+		{
+			if ( !field || field.isDisplayed() )
+				continue;
+
+			this.displayField( field );
+		}
+	}
+
+
+	public tryToEndGame()
+	{
+		let state;
+
+		if ( this.board.find( ( v ) => v.isDisplayed ) == undefined )
+			state = true;
+		else if ( this.board.find( ( v ) => v.isMine && v.isDisplayed() ) )
+			state = false;
+		else
+		{
+			const notDisplayedFields = this.board.filter( ( v ) => v.state != FieldState.DISPLAYED );
+
+			if ( notDisplayedFields.length == this.minesCount )
+			{
+				state = true;
+
+				for ( let field of notDisplayedFields )
+					field.state = FieldState.MARKED;
+			}
+		}
+
+		if ( state !== undefined )
+			this.endGame( state );
+	}
+
+
+	public endGame( success: boolean )
+	{
+		this.displayNotTouchedFields();
+
+		if ( success )
+			alert( "You won!" );
+		else
+			alert( "You lose!" );
+	}
+
+
+	protected displayNotTouchedFields()
+	{
+		for ( let field of this.board )
+			if ( field.state == FieldState.DEFAULT )
+				field.state = FieldState.DISPLAYED;
+	}
+
+
+	public switchFieldState( field: Field )
+	{
+		if ( field.isDisplayed() )
+			return;
+
+		if ( field.state == FieldState.DEFAULT )
+			field.state = FieldState.MARKED;
+		else if ( field.state == FieldState.MARKED )
+			field.state = FieldState.UNKNOWN;
+		else
+			field.state = FieldState.DEFAULT;
+
+
 	}
 }
